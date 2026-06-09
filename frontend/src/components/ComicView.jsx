@@ -83,10 +83,7 @@ export default function ComicView({ noteId, noteTitle, noteContent }) {
 
   if (!noteId) return null
 
-  // If in Manga mode, Japanese comics are read Right-to-Left, so reverse display array order
-  const displayedPanels = isMangaMode && comic?.panels 
-    ? [...comic.panels].reverse() 
-    : (comic?.panels || [])
+  const displayedPanels = comic?.panels || []
 
   return (
     <div className="comic-strip-container">
@@ -182,15 +179,18 @@ export default function ComicView({ noteId, noteTitle, noteContent }) {
           </button>
         </div>
       ) : (
-        <div className="comic-grid">
+        <div className="comic-grid" style={{ direction: isMangaMode ? 'rtl' : 'ltr' }}>
           {displayedPanels.map((panel, idx) => {
             // If in Manga mode, we apply monochrome halftone styles
-            const panelStyle = isMangaMode ? {
-              border: '4px solid #121212',
-              boxShadow: '4px 4px 0px #121212',
-              background: '#ffffff',
-              transition: 'transform 0.2s ease'
-            } : {};
+            const panelStyle = {
+              direction: 'ltr',
+              ...(isMangaMode ? {
+                border: '4px solid #121212',
+                boxShadow: '4px 4px 0px #121212',
+                background: '#ffffff',
+                transition: 'transform 0.2s ease'
+              } : {})
+            };
 
             const illustrationStyle = isMangaMode ? {
               // Classic screentone halftone dot background
