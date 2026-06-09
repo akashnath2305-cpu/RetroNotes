@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LogOut, Plus, Sparkles, Trash2, FileText, ChevronRight, Folder, Book, ArrowLeft, Paintbrush, Edit3, X, Calendar } from 'lucide-react'
+import { LogOut, Plus, Sparkles, Trash2, FileText, ChevronRight, Folder, Book, ArrowLeft, Paintbrush, Edit3, X, Calendar, Star } from 'lucide-react'
 import Login from './components/Login'
 import Loader from './components/Loader'
 import NoteEditor from './components/NoteEditor'
@@ -8,12 +8,14 @@ import DigitalClock from './components/DigitalClock'
 import ComicView from './components/ComicView'
 
 import DailyTasks from './components/DailyTasks'
+import FeedbackHub from './components/FeedbackHub'
 
 export default function App() {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState('')
   const [loading, setLoading] = useState(true)
   const [showDailyTasks, setShowDailyTasks] = useState(false)
+  const [showFeedbackHub, setShowFeedbackHub] = useState(false)
 
   // Notebooks and Pages States
   const [notebooks, setNotebooks] = useState([])
@@ -737,6 +739,7 @@ export default function App() {
       {/* Main Content Area */}
       <main className="main-content" style={{ position: 'relative' }}>
         {showDailyTasks && <DailyTasks onClose={() => setShowDailyTasks(false)} />}
+        {showFeedbackHub && <FeedbackHub onClose={() => setShowFeedbackHub(false)} token={token} currentUser={user} />}
 
         {/* Header */}
         <header className="app-header">
@@ -744,6 +747,9 @@ export default function App() {
             📝 <span>RetroNotes</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button className="btn btn-icon shake-hover" onClick={() => setShowFeedbackHub(true)} title="Feedback Hub" style={{ width: '36px', height: '36px', border: '2px solid var(--border-color)', borderRadius: '50%', color: '#ff9100' }}>
+              <Star size={16} />
+            </button>
             <button className="btn btn-icon shake-hover" onClick={() => setShowDailyTasks(true)} title="Daily Tasks" style={{ width: '36px', height: '36px', border: '2px solid var(--border-color)', borderRadius: '50%' }}>
               <Calendar size={16} />
             </button>
