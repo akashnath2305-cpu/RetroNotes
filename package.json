@@ -10,7 +10,7 @@
     "dev-backend": "cd backend && npm run dev",
     "dev-frontend": "cd frontend && npm run dev",
     "build-all": "concurrently \"npm run build-backend\" \"npm run build-frontend\"",
-    "build-backend": "cd backend && npm run build",
+    "build-backend": "cd backend && npm install",
     "build-frontend": "cd frontend && npm run build"
   },
   "devDependencies": {
