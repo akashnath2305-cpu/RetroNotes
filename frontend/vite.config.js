@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       port: 3000,
+      allowedHosts: ['retronotes-1.onrender.com'],
       proxy: {
         '/api': {
           target: env.VITE_BACKEND_URL,
