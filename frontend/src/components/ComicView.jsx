@@ -103,7 +103,7 @@ export default function ComicView({ noteId, noteTitle, noteContent }) {
               textTransform: 'uppercase',
               letterSpacing: '0.05em'
             }}>
-              {isMangaMode ? '📖 Read Right-to-Left (Flow: 3 ⇦ 2 ⇦ 1)' : '📖 Read Left-to-Right (Flow: 1 ⇨ 2 ⇨ 3)'}
+              '📖 Read Left-to-Right (Flow: 1 ⇨ 2 ⇨ 3)'
             </span>
           )}
         </div>
@@ -127,7 +127,7 @@ export default function ComicView({ noteId, noteTitle, noteContent }) {
                 checked={isMangaMode}
                 onChange={(e) => setIsMangaMode(e.target.checked)}
                 style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--color-primary)' }}
-                title="Toggle Japanese Manga Mode (B&W/RTL)"
+                title="Toggle Manga Filter (B&W)"
               />
             </div>
           )}
@@ -179,7 +179,7 @@ export default function ComicView({ noteId, noteTitle, noteContent }) {
           </button>
         </div>
       ) : (
-        <div className="comic-grid" style={{ direction: isMangaMode ? 'rtl' : 'ltr' }}>
+        <div className="comic-grid">
           {displayedPanels.map((panel, idx) => {
             // If in Manga mode, we apply monochrome halftone styles
             const panelStyle = {

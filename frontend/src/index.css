@@ -1013,18 +1013,18 @@ h6 {
 
 .comic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 /* Comic Panel Visuals */
 .comic-panel {
   border: 4px solid var(--border-color);
   background: #ffffff;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  min-height: 320px;
+  min-height: 240px;
   position: relative;
   box-shadow: 3px 3px 0 #121212;
   transition: transform 0.2s ease;
