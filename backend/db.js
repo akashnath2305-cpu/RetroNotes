@@ -93,6 +93,15 @@ const initDbQuery = `
     quiz_json TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS feedbacks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    content TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'General',
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
 `;
 
 const initDb = async () => {
@@ -114,6 +123,18 @@ const initDb = async () => {
     await client.query('ALTER TABLE notes ADD COLUMN IF NOT EXISTS drawing_data TEXT;');
     await client.query('ALTER TABLE sticky_notes ADD COLUMN IF NOT EXISTS note_id UUID REFERENCES notes(id) ON DELETE CASCADE;');
     await client.query('ALTER TABLE sticky_notes ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT \'manual\';');
+    
+    // Create feedbacks table if not exists
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS feedbacks (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        content TEXT NOT NULL,
+        type VARCHAR(50) DEFAULT 'General',
+        status VARCHAR(50) DEFAULT 'Pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
     
     console.log('Database tables successfully checked/created.');
     

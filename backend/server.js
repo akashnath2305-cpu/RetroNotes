@@ -121,46 +121,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Mock Social Login Endpoint (Google/GitHub/Apple)
-app.post('/api/auth/social-login', async (req, res) => {
-  const { provider, email, username } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required for social login' });
-  }
-
-  const cleanEmail = email.toLowerCase().trim();
-  const defaultUsername = username || cleanEmail.split('@')[0];
-
-  try {
-    // Check if user already exists
-    let result = await db.query('SELECT * FROM users WHERE email = $1', [cleanEmail]);
-    let user = result.rows[0];
-
-    if (!user) {
-      // Register user if not exists with a random password
-      const randomPassword = require('crypto').randomBytes(16).toString('hex');
-      const passwordHash = await bcrypt.hash(randomPassword, 10);
-      
-      const insertResult = await db.query(
-        'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email',
-        [defaultUsername, cleanEmail, passwordHash]
-      );
-      user = insertResult.rows[0];
-    }
-
-    // Generate JWT token
-    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
-
-    res.json({
-      user: { id: user.id, username: user.username, email: user.email },
-      token
-    });
-  } catch (error) {
-    console.error('Social login error:', error);
-    res.status(500).json({ error: 'Social authentication failed' });
-  }
-});
 
 // ==========================================
 // NOTEBOOKS ENDPOINTS
@@ -871,6 +832,45 @@ app.post('/api/notes/:id/quiz', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Generate quiz error:', error);
     res.status(500).json({ error: 'Error generating quiz' });
+  }
+});
+
+// ==========================================
+// FEEDBACK HUB ENDPOINTS
+// ==========================================
+
+// Get all feedbacks
+app.get('/api/feedbacks', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT f.id, f.content, f.type, f.status, f.created_at, u.username
+       FROM feedbacks f
+       LEFT JOIN users u ON f.user_id = u.id
+       ORDER BY f.created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Fetch feedbacks error:', error);
+    res.status(500).json({ error: 'Error fetching feedbacks' });
+  }
+});
+
+// Create feedback
+app.post('/api/feedbacks', authenticateToken, async (req, res) => {
+  const { content, type } = req.body;
+  if (!content) {
+    return res.status(400).json({ error: 'Feedback content is required' });
+  }
+
+  try {
+    const result = await db.query(
+      'INSERT INTO feedbacks (user_id, content, type) VALUES ($1, $2, $3) RETURNING *',
+      [req.user.id, content, type || 'General']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create feedback error:', error);
+    res.status(500).json({ error: 'Error submitting feedback' });
   }
 });
 
